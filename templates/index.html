@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Şekerli mi? Şekersiz mi? Hayatın en zor kararı!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 30px;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff5733;
+            padding: 15px;
+            border-radius: 10px;
+            background: #fff3e0;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .product {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            background: white;
+            transition: 0.3s;
+            text-align: center;
+            font-size: 16px;
+        }
+        .product:hover {
+            background: #e9ecef;
+        }
+        .product img {
+            width: 50px;
+            height: 50px;
+        }
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .btn-remove {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .btn-custom {
+            background-color: #ff5733;
+            color: white;
+            font-size: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            transition: 0.3s;
+            width: 100%;
+            font-weight: bold;
+        }
+        .btn-custom:hover {
+            background-color: #c70039;
+        }
+        .form-select {
+            width: 200px; /* Şeker seçeneklerini daha da genişletiyoruz */
+            font-size: 16px;
+            padding: 8px;
+        }
+    </style>
+    <script>
+        function addToCart(name) {
+            var cartContainer = document.getElementById("cart-container");
+            var cartItem = document.createElement("div");
+            cartItem.classList.add("cart-item");
+
+            let options = "";
+            if (name === "Kahve") {
+                options = `
+                    <option value="Şekersiz">🚫 Şekersiz</option>
+                    <option value="Orta Şekerli">🍭 Orta Şekerli</option>
+                    <option value="Şekerli">🍬 Şekerli</option>
+                `;
+            } else if (name === "Nescafe") {
+                options = `
+                    <option value="3'ü 1 Arada">🥤 3'ü 1 Arada</option>
+                    <option value="2'si 1 Arada">🥤 2'si 1 Arada</option>
+                `;
+            } else if (name === "Çay" || name === "Bitki Çayı") {
+                options = `
+                    <option value="Şekersiz">🚫 Şekersiz</option>
+                    <option value="Şekerli">🍬 Şekerli</option>
+                `;
+            } else {
+                options = `<option value="Yok">🚫 Şeker Seçeneği Yok</option>`;
+            }
+
+            cartItem.innerHTML = `
+                <input type="hidden" name="icecek[]" value="${name}">
+                <span>${name}</span>
+                <input type="number" class="form-control" name="adet[]" min="1" value="1" style="width: 60px;">
+                <select class="form-select seker_durumu" name="seker_durumu[]">
+                    ${options}
+                </select>
+                <button type="button" class="btn-remove" onclick="removeFromCart(this)">❌</button>
+            `;
+
+            cartContainer.appendChild(cartItem);
+        }
+
+        function removeFromCart(button) {
+            button.parentElement.remove();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            ☕ Şekerli mi? Şekersiz mi? Hayatın en zor kararı!
+        </div>
+        <div class="form-container">
+            <h5 class="text-center mt-3">Ürünler</h5>
+            <div class="product-grid">
+                <div class="product" onclick="addToCart('Çay')">
+                    <img src="tea.png" alt="Çay">
+                    🍵
+                </div>
+                <div class="product" onclick="addToCart('Kahve')">
+                    <img src="coffee.png" alt="Kahve">
+                    ☕
+                </div>
+                <div class="product" onclick="addToCart('Nescafe')">
+                    <img src="nescafe.png" alt="Nescafe">
+                    🥤
+                </div>
+                <div class="product" onclick="addToCart('Soğuk İçecek')">
+                    <img src="cold_drink.png" alt="Soğuk İçecek">
+                    🧃
+                </div>
+                <div class="product" onclick="addToCart('Su')">
+                    <img src="water.png" alt="Su">
+                    💧
+                </div>
+                <div class="product" onclick="addToCart('Bitki Çayı')">
+                    <img src="herbal_tea.png" alt="Bitki Çayı">
+                    🌿
+                </div>
+            </div>
+
+            <form action="/siparis" method="POST">
+                <h5 class="mt-4">Sepetiniz</h5>
+                <div id="cart-container"></div>
+
+                <div class="mb-3">
+                    <label for="lokasyon" class="form-label">Siparişin Gideceği Yer:</label>
+                    <select class="form-select" id="lokasyon" name="lokasyon" required>
+                        <option value="Toplantı Odası">🏢 Toplantı Odası</option>
+                        <option value="Dışarı Kamelya">🌳 Dışarı Kamelya</option>
+                        <option value="Kurulum Ofisi">🔧 Kurulum Ofisi</option>
+                        <option value="Arıza Ofisi">⚙️ Arıza Ofisi</option>
+                        <option value="Ön Ofis">📌 Ön Ofis</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-custom">🚀 Sipariş Ver</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
